@@ -1,0 +1,74 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: rgba(150, 83, 120, 0.8);
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle, rgba(255, 102, 0, 0.1) 0%, rgba(10, 10, 10, 0) 70%);
+}
+
+app-root {
+  display: flex;
+
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgb(243, 180, 198);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgb(232, 189, 205);
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid rgb(241, 187, 207);
+  color: #737373;
+}
+
+table th {
+  background: rgb(241, 209, 221);
+}
+
+table tr:nth-child(even) {
+  background: rgb(236, 187, 203);
+}
+
+table tr:hover {
+  background: rgb(225, 173, 191);
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 1.2em;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgb(232, 189, 205);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+  box-shadow: 0 0 20px rgb(224, 165, 187);
+}

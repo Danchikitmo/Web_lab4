@@ -1,0 +1,141 @@
+.logout-button {
+  margin-top: auto;
+}
+
+label, p{
+  color: #737373; /* Розовый */
+}
+
+@media (min-width: 1051px) {
+  .main-space {
+    display: flex;
+    flex-direction: row;
+    background: rgb(232, 189, 205); /* Розовый */
+    border-radius: 20px;
+    padding: 40px;
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .results-table {
+    margin: 20px;
+  }
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    margin-right: 20px;
+    margin-left: 40px;
+  }
+}
+
+@media (min-width: 885px) and (max-width: 1050px) {
+  .main-space {
+    display: flex;
+    flex-direction: column;
+    background: rgb(232, 189, 205); /* Розовый */
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .results-table {
+    margin-bottom: 20px;
+  }
+  .form {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 884px) {
+  .main-space {
+    display: flex;
+    flex-direction: column;
+    background: rgb(232, 189, 205); /* Розовый */
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .results-table {
+    margin-bottom: 20px;
+  }
+  .form {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+}
+
+.content-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 15px;
+}
+
+input[type="text"] {
+  padding: 8px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.5); /* Розовый */
+  color: rgb(115, 115, 115); /* Розовый */
+  box-shadow: 0 0 15px rgba(236, 163, 174, 0.5); /* Блёстки */
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus {
+  background: rgba(255, 192, 203, 0.5); /* Розовый */
+  box-shadow: 0 0 25px rgba(232, 155, 168, 0.5); /* Блёстки */
+  outline: none;
+}
+
+.results-table {
+  margin-top: 15px;
+  width: 100%;
+  height: 50vh;
+  overflow: auto;
+}
+
+.videoPlayer {
+  margin: auto;
+  height: 80%;
+  width: 80%;
+  display: none;
+}
+
+.main-space::before {
+  position: absolute;
+  content: "";
+  width: 100vh;
+  height: 100%;
+  pointer-events: none;
+}
+
+#graph {
+  border-radius: 15px;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 192, 203, 0.3); /* Розовый */
+  color: #fff;
+  font-size: 1.2em;
+  box-shadow: 0 0 10px rgb(203, 169, 182);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+  background: rgba(239, 159, 188, 0.45); /* Розовый */
+}

@@ -1,0 +1,21 @@
+<div class="form">
+  <div class="toggle-buttons">
+    <button class="toggle-button" [class.active]="loginClick" (click)="onLoginClick()" data-target="login">Вход</button>
+    <button class="toggle-button" [class.active]="registrationClick" (click)="onRegistrationClick()" data-target="registration">Регистрация</button>
+  </div>
+  <div class="form-fields">
+    <div class="login" [ngClass]="{'active': loginClick}">
+      <p>Вход</p>
+      <input type="text" id="login-username" name="login-username" placeholder="Логин" required [(ngModel)]="loginUsername">
+      <input type="password" id="login-password" name="login-password" placeholder="Пароль" required [(ngModel)]="loginPassword">
+      <button type="submit" class="login-button" (click)="login()">Вход</button>
+    </div>
+    <div class="registration" [ngClass]="{'active': registrationClick}">
+      <p>Регистрация</p>
+      <input type="text" id="reg-username" name="reg-username" placeholder="Логин" required [(ngModel)]="registrationUsername">
+      <input type="password" id="reg-password" name="reg-password" placeholder="Пароль" required [(ngModel)]="registrationPassword">
+      <input type="password" id="reg-conf-password" name="reg-conf-password" placeholder="Повторите пароль" required [(ngModel)]="registrationConfPassword">
+      <button type="submit" class="login-button" (click)="register()">Регистрация</button>
+    </div>
+  </div>
+</div>

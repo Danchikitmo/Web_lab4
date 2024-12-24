@@ -1,0 +1,61 @@
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background: rgba(255, 20, 147, 0.1); /* Розовый фон с прозрачностью */
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+@media (min-width: 1164px) {
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 777px) and (max-width: 1163px) {
+  .container {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 776px) {
+  .container {
+    padding: 10px;
+  }
+}
+
+.main-app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.router-outlet {
+  height: 80%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 20, 147, 0.2); /* Розовый фон с прозрачностью */
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+h1 {
+  margin: 0;
+  padding: 15px 0;
+  font-size: 3em;
+  text-shadow: 0 0 20px rgba(255, 192, 203, 0.8); /* Блёстки */
+  color: #f5edf0; /* Розовый */
+  animation: shimmer 4s infinite;
+}
