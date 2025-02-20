@@ -1,14 +1,4 @@
 <div class="main-space">
-  <div class="video">
-    <video #loseVideoPlayer class="videoPlayer" id="loseVideoPlayer" (ended)="onVideoEnded()">
-      <source src="\videos\не_лолька.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <video #winVideoPlayer class="videoPlayer" id="winVideoPlayer" (ended)="onVideoEnded()">
-      <source src="\videos\лолька.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
   <div #form class="form">
     <p>Выберите X</p>
     <div class="x-points">
@@ -25,7 +15,9 @@
       </select>
     </div>
 
-    <p>Введите Y</p>
+      <p>{{ message }}</p>
+
+      <p>Введите Y</p>
     <input id="y-val" type="text" (input)="onTextChanged($event)">
     <p>Выберите R</p>
     <div class="r-points">
@@ -36,13 +28,6 @@
         <option value="4">4</option>
         <option value="5">5</option>
       </select>
-    </div>
-
-    <div class="animations-skip">
-      <label>
-        Пропускать видео
-        <input type="checkbox" class="skip-box" (change)="onCheckBoxChange($event)">
-      </label>
     </div>
 
     <div class="submit-button">
@@ -62,13 +47,13 @@
       </pattern>
       <rect width="650" height="650" fill="url(#smallGrid)" />
       <!-- Прямоугольник -->
-      <rect x="100" y="200" width="200" height="100" fill="#ab7593" fill-opacity="0.4" stroke="#ab7593"></rect>
+      <rect x="300" y="200" width="200" height="100" fill="#ab7593" fill-opacity="0.4" stroke="#ab7593"></rect>
 
       <!-- Треугольник -->
-      <polygon points="500,300 300,200 300,300" fill="#ab7593" fill-opacity="0.4" stroke="#ab7593"></polygon>
+      <polygon points="200,300 300,200 300,300" fill="#ab7593" fill-opacity="0.4" stroke="#ab7593"></polygon>
 
       <!-- Полукруг -->
-      <path d="M 300 400 A 100 100, 0, 0, 1, 200 300 L 300 300 Z" fill="#ab7593" fill-opacity="0.4" stroke="#ab7593"></path>
+        <path d="M 300 400 A 100 100, 0, 0, 0, 400 300 L 300 300 Z" fill="#ab7593" fill-opacity="0.4" stroke="#ab7593"></path>
       <!-- Оси со стрелками -->
       <line stroke="black" x1="0" x2="600" y1="300" y2="300"></line>
       <line stroke="black" x1="300" x2="300" y1="0" y2="600"></line>
