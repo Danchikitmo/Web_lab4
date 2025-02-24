@@ -2,6 +2,7 @@ package com.example.web4spring.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,12 +36,12 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        return Jwts.parser()
+        Claims claims = Jwts.parser()
                 .setSigningKey(SECRET_KEY.getBytes())
                 .build()
-                .parseSignedClaims(token)
-                .getBody()
-                .getSubject();
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
     }
 
     public boolean isTokenValid(String token, String username) {
@@ -49,12 +50,11 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token) {
-        return Jwts.parser()
+        Claims claims = Jwts.parser()
                 .setSigningKey(SECRET_KEY.getBytes())
                 .build()
-                .parseSignedClaims(token)
-                .getBody()
-                .getExpiration()
-                .before(new Date());
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getExpiration().before(new Date());
     }
 }

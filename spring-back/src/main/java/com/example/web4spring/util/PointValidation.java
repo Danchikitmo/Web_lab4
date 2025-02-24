@@ -15,6 +15,8 @@ public class PointValidation {
         return checkX(x, dataType) && checkY(y) && checkR(r, dataType);
     }
     private void listFill(){
+        XRList.add(-5d);
+        XRList.add(-4d);
         XRList.add(-3d);
         XRList.add(-2d);
         XRList.add(-1d);
@@ -22,13 +24,11 @@ public class PointValidation {
         XRList.add(1d);
         XRList.add(2d);
         XRList.add(3d);
-        XRList.add(4d);
-        XRList.add(5d);
     }
     private boolean checkX(double X, String dataType){
         if (dataType.equals("click")){
             System.out.println(X);
-            return -3 <= X && X <= 5;
+            return -5 <= X && X <= 3;
         }
         return XRList.contains(X);
     }
@@ -38,7 +38,7 @@ public class PointValidation {
     private boolean checkR(double R, String dataType){
         if (dataType.equals("click")){
             System.out.println(R);
-            return 1 <= R && R <= 5;
+            return -5 <= R && R <= 3;
         }
         return XRList.contains(R);
     }
