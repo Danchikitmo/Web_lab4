@@ -66,19 +66,26 @@ export class HomeComponent implements OnInit {
 
   onRChanged(event: Event) {
     this.rValue = parseFloat((event.target as HTMLInputElement).value);
+    this.onLoadTableUpdate();
     this.drawPoints();
   }
 
-  graphClick(event: { clientX: any; clientY: any; }) {
-    if (1 <= this.rValue && this.rValue <= 5) {
+
+  graphClick(event: { clientX: number; clientY: number }) {
+    if (Math.abs(this.rValue) >= 1 && Math.abs(this.rValue) <= 5) {
       const rect = this.graph.nativeElement.getBoundingClientRect();
+
+      const x = ((event.clientX - rect.left) - 300) * (Math.abs(this.rValue) / 200) * Math.sign(this.rValue);
+      const y = (300 - (event.clientY - rect.top)) * (Math.abs(this.rValue) / 200) * Math.sign(this.rValue);
+
       const body = {
         action: "click",
-        x: ((event.clientX - rect.left) - 300) * (this.rValue / 200),
-        y: (300 - (event.clientY - rect.top)) * (this.rValue / 200),
+        x: x,
+        y: y,
         r: this.rValue,
         uid: localStorage.getItem('uid')
       };
+
       this.http.post<any>(this.apiUrl, body, { headers: this.headers }).subscribe(
           (response: any) => {
             if (response) {
@@ -94,6 +101,7 @@ export class HomeComponent implements OnInit {
       );
     }
   }
+
 
   exitClick() {
     localStorage.removeItem('username');
@@ -130,7 +138,7 @@ export class HomeComponent implements OnInit {
   }
 
   checkValues() {
-    return -3 <= this.xValue && this.xValue <= 5 && -5 <= this.yValue && this.yValue <= 3 && 1 <= this.rValue && this.rValue <= 5;
+    return -5 <= this.xValue && this.xValue <= 3 && -5 <= this.yValue && this.yValue <= 3 && -5 <= this.rValue && this.rValue <= 3;
   }
 
   onLoadTableUpdate() {
@@ -158,28 +166,33 @@ export class HomeComponent implements OnInit {
     circles.forEach((circle: any) => {
       this.graph.nativeElement.removeChild(circle);
     });
+
     let color;
     let opacity;
     let strokeOpacity;
+
     this.data.forEach(item => {
-      if (item.shot == 1 && this.rValue == item.r) {
+      if (item.shot == 1 && Math.abs(this.rValue) == Math.abs(item.r)) {
         color = "rgb(227,122,160)";
         opacity = "1";
         strokeOpacity = "0.3";
-      }
-      else if (item.shot == 0 && this.rValue == item.r) {
+      } else if (item.shot == 0 && Math.abs(this.rValue) == Math.abs(item.r)) {
         color = "rgba(114,60,89,0.8)";
         opacity = "1";
         strokeOpacity = "0.1";
-      }
-      else {
+      } else {
         color = "gray";
         opacity = "0.4";
         strokeOpacity = "0";
       }
+
+      const scaleFactor = 200 / Math.abs(this.rValue);
+      const xCoord = 300 + item.x * scaleFactor * Math.sign(this.rValue);
+      const yCoord = 300 - item.y * scaleFactor * Math.sign(this.rValue);
+
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('cx', (300 + item.x * (200 / this.rValue)).toString());
-      circle.setAttribute('cy', (300 - item.y * (200 / this.rValue)).toString());
+      circle.setAttribute('cx', xCoord.toString());
+      circle.setAttribute('cy', yCoord.toString());
       circle.setAttribute('r', '5');
       circle.setAttribute('visibility', 'visible');
       circle.setAttribute('stroke', 'white');
@@ -189,6 +202,8 @@ export class HomeComponent implements OnInit {
       this.graph.nativeElement.appendChild(circle);
     });
   }
+
+
 
   onCheckBoxChange(event: Event) {
     this.skipValue = (event.target as HTMLInputElement).checked;
