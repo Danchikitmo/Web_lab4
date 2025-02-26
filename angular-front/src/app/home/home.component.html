@@ -89,24 +89,32 @@
 
     </svg>
   </div>
-  <div #resultTable class="results-table">
-    <table class="res-table" id="res-table">
-      <thead>
-        <tr>
-          <th>Попали?</th>
-          <th>X</th>
-          <th>Y</th>
-          <th>R</th>
-        </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let item of data">
-        <td>{{ item.shot==1 ? '✅' : '❌' }}</td>
-        <td>{{ item.x }}</td>
-        <td>{{ item.y }}</td>
-        <td>{{ item.r }}</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+    <div #resultTable class="results-table">
+        <table class="res-table" id="res-table">
+            <thead>
+            <tr>
+                <th>Попали?</th>
+                <th>X</th>
+                <th>Y</th>
+                <th>R</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of data">
+                <td>{{ item.shot == 1 ? '✅' : '❌' }}</td>
+                <td>{{ item.x }}</td>
+                <td>{{ item.y }}</td>
+                <td>{{ item.r }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <button *ngFor="let page of [].constructor(totalPages); let i = index"
+                (click)="onPageChange(i)"
+                [class.active]="i === currentPage">
+            {{ i + 1 }}
+        </button>
+    </div>
 </div>

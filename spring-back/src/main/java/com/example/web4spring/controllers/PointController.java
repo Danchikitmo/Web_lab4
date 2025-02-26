@@ -9,14 +9,14 @@ import jakarta.persistence.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
+import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping("/api/shots")
@@ -50,8 +50,20 @@ public class PointController {
 
     @PostMapping("/points")
     public ResponseEntity<List<Point>> getPoints(@RequestBody Map<String, String> data) {
-        if (data.get("action").equals("getAllForUser"))
-            return ResponseEntity.ok(pointService.getPointsByUser(Long.valueOf(data.get("uid"))));
+        if (data.get("action").equals("getAllForUser")) {
+            List<Point> points = pointService.getPointsByUser(Long.valueOf(data.get("uid")));
+            Collections.reverse(points);
+            return ResponseEntity.ok(points);
+        }
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/points/paginated")
+    public ResponseEntity<Page<Point>> getPointsPaginated(
+            @RequestParam Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<Point> points = pointService.getPointsByUser(userId, page, size);
+        return ResponseEntity.ok(points);
     }
 }
