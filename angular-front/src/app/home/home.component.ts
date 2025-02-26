@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule, HttpClient, HttpHeaders } from '@angular/common/http';
+import {HttpClientModule, HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { Page } from "../page.module";
 
 @Component({
   selector: 'app-home',
@@ -16,47 +17,75 @@ export class HomeComponent implements OnInit {
 
   private apiUrl = 'http://localhost:8080/api/shots/home';
   private apiUrlForPoints = 'http://localhost:8080/api/shots/points';
+  private apiUrlForPaginatedPoints = 'http://localhost:8080/api/shots/points/paginated';
 
   message: string = "";
-
-  ngOnInit() {
-    this.selectedOptionsR[1] = true;
-    this.selectedOptionsX[0] = true;
-    this.onLoadTableUpdate();
-    console.log(localStorage.getItem('username'));
-  }
-
-  @ViewChild('graph', { static: false }) graph!: ElementRef;
-  @ViewChild('resultTable', { static: false }) resultTable!: ElementRef;
-  @ViewChild('form', { static: false }) form!: ElementRef;
-  @ViewChild('loseVideoPlayer', { static: false }) loseVideoPlayer!: ElementRef;
-  @ViewChild('winVideoPlayer', { static: false }) winVideoPlayer!: ElementRef;
-
-  rValue = 1;
-  xValue = parseFloat("0");
-  yValue = parseFloat("");
-  skipValue: boolean = false;
-  selectedOptionsX: { [key: number]: boolean } = {};
+  data: any[] = [];
+  currentPage = 0;
+  pageSize = 5;
+  totalPages = 0;
   headers = new HttpHeaders({
     'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
     'Content-Type': 'application/json'
   });
-  data: any[] = [];
 
+  @ViewChild('graph', { static: false }) graph!: ElementRef;
+
+  rValue = 1;
+  xValue = 0;
+  yValue = NaN;
+  skipValue: boolean = false;
+  selectedOptionsX: { [key: number]: boolean } = {};
   selectedOptionsR: { [key: number]: boolean } = {};
 
+  ngOnInit() {
+    this.selectedOptionsR[1] = true;
+    this.selectedOptionsX[0] = true;
+    this.loadPaginatedData();
+  }
+
+  loadPaginatedData(): void {
+    const userId = localStorage.getItem('uid');
+    if (!userId) return;
+
+    const params = new HttpParams()
+        .set('userId', userId)
+        .set('page', this.currentPage.toString())
+        .set('size', this.pageSize.toString());
+
+    this.http.get<Page<any>>(this.apiUrlForPaginatedPoints, { params, headers: this.headers }).subscribe(
+        (response) => {
+          this.data = response.content;
+          this.totalPages = response.totalPages;
+          this.drawPoints();
+        },
+        (error) => {
+          this.message = "Ошибка при загрузке данных.";
+        }
+    );
+  }
+
+  onPageChange(page: number): void {
+    if (page !== this.currentPage) {
+      this.currentPage = page;
+      this.loadPaginatedData();
+    }
+  }
+
   onTextChanged(event: Event) {
-    const inputValue = (event.target as HTMLInputElement).value;
-    const isValidNumber = /^[-]?(\d+(\.\d*)?|\.\d+)$/.test(inputValue);
-    this.yValue = parseFloat((event.target as HTMLInputElement).value);
-    if (!isValidNumber) {
-      if ((event.target as HTMLInputElement).value !== "-")
-        (event.target as HTMLInputElement).value = "";
-    } else {
-      const yValue = parseFloat(inputValue);
-      if (yValue < -5 || yValue > 3) {
-        (event.target as HTMLInputElement).value = "";
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+    const isValidNumber = /^-?\d+(\.\d+)?$/.test(value);
+
+    if (isValidNumber) {
+      const numValue = parseFloat(value);
+      if (numValue >= -5 && numValue <= 3) {
+        this.yValue = numValue;
+      } else {
+        input.value = "";
       }
+    } else {
+      if (value !== "-") input.value = "";
     }
   }
 
@@ -66,10 +95,9 @@ export class HomeComponent implements OnInit {
 
   onRChanged(event: Event) {
     this.rValue = parseFloat((event.target as HTMLInputElement).value);
-    this.onLoadTableUpdate();
+    this.loadPaginatedData();
     this.drawPoints();
   }
-
 
   graphClick(event: { clientX: number; clientY: number }) {
     if (Math.abs(this.rValue) >= 1 && Math.abs(this.rValue) <= 5) {
@@ -89,8 +117,9 @@ export class HomeComponent implements OnInit {
       this.http.post<any>(this.apiUrl, body, { headers: this.headers }).subscribe(
           (response: any) => {
             if (response) {
-              this.data.push(response);
-              this.drawPoints();
+              this.data.unshift(response); // Добавляем новую точку в начало массива
+              this.drawPoints(); // Перерисовываем график
+              this.loadPaginatedData(); // Обновляем пагинацию
             } else {
               this.message = "Неверные координаты.";
             }
@@ -102,111 +131,56 @@ export class HomeComponent implements OnInit {
     }
   }
 
-
   exitClick() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('uid');
+    localStorage.clear();
     this.router.navigate(['/login'], { skipLocationChange: true });
   }
 
   submitClick() {
-    if (this.checkValues()) {
-      const body = {
-        action: "button",
-        x: this.xValue,
-        y: this.yValue,
-        r: this.rValue,
-        uid: localStorage.getItem('uid')
-      };
-      this.http.post<any>(this.apiUrl, body, { headers: this.headers }).subscribe(
-          (response: { shot: number; }) => {
-            if (response) {
-              this.data.push(response);
-              this.drawPoints();
-            } else {
-              this.message = "Неверные координаты.";
-            }
-          },
-          () => {
-            this.message = "Ошибка при обращении к серверу.";
-          }
-      );
-    } else {
+    if (!this.checkValues()) {
       this.message = "Проверьте правильность заполнения полей.";
+      return;
     }
+
+    const body = { action: "button", x: this.xValue, y: this.yValue, r: this.rValue, uid: localStorage.getItem('uid') };
+    this.http.post<any>(this.apiUrl, body, { headers: this.headers }).subscribe(
+        response => {
+          if (response) {
+            this.data.unshift(response);
+            this.drawPoints();
+          } else {
+            this.message = "Неверные координаты.";
+          }
+        },
+        error => { this.message = "Ошибка при обращении к серверу: " + error.message; }
+    );
   }
 
   checkValues() {
     return -5 <= this.xValue && this.xValue <= 3 && -5 <= this.yValue && this.yValue <= 3 && -5 <= this.rValue && this.rValue <= 3;
   }
 
-  onLoadTableUpdate() {
-    const body = {
-      action: "getAllForUser",
-      uid: localStorage.getItem('uid')
-    };
-    this.http.post<any>(this.apiUrlForPoints, body, { headers: this.headers }).subscribe(
-        (response: any[]) => {
-          if (response) {
-            this.data = response;
-            this.drawPoints();
-          } else {
-            this.message = "Неверные координаты.";
-          }
-        },
-        () => {
-          this.message = "Ошибка при обращении к серверу.";
-        }
-    );
-  }
-
   drawPoints() {
-    const circles = this.graph.nativeElement.querySelectorAll('circle');
-    circles.forEach((circle: any) => {
-      this.graph.nativeElement.removeChild(circle);
-    });
+    const svgElement = this.graph.nativeElement;
+    const points = svgElement.querySelectorAll('circle');
+    points.forEach((point: Element) => point.remove());
 
-    let color;
-    let opacity;
-    let strokeOpacity;
 
     this.data.forEach(item => {
-      if (item.shot == 1 && Math.abs(this.rValue) == Math.abs(item.r)) {
-        color = "rgb(227,122,160)";
-        opacity = "1";
-        strokeOpacity = "0.3";
-      } else if (item.shot == 0 && Math.abs(this.rValue) == Math.abs(item.r)) {
-        color = "rgba(114,60,89,0.8)";
-        opacity = "1";
-        strokeOpacity = "0.1";
-      } else {
-        color = "gray";
-        opacity = "0.4";
-        strokeOpacity = "0";
-      }
-
       const scaleFactor = 200 / Math.abs(this.rValue);
-      const xCoord = 300 + item.x * scaleFactor * Math.sign(this.rValue);
-      const yCoord = 300 - item.y * scaleFactor * Math.sign(this.rValue);
+      const xCoord = 300 + item.x * scaleFactor;
+      const yCoord = 300 - item.y * scaleFactor;
 
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       circle.setAttribute('cx', xCoord.toString());
       circle.setAttribute('cy', yCoord.toString());
       circle.setAttribute('r', '5');
-      circle.setAttribute('visibility', 'visible');
-      circle.setAttribute('stroke', 'white');
-      circle.setAttribute('fill', color);
-      circle.setAttribute('stroke-opacity', strokeOpacity);
-      circle.setAttribute('fill-opacity', opacity);
-      this.graph.nativeElement.appendChild(circle);
+      circle.setAttribute('fill', item.shot ? "rgb(227,122,160)" : "rgba(114,60,89,0.8)");
+      svgElement.appendChild(circle); // Добавляем круг
     });
   }
 
-
-
   onCheckBoxChange(event: Event) {
     this.skipValue = (event.target as HTMLInputElement).checked;
-    console.log(this.skipValue);
   }
 }

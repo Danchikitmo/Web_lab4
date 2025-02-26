@@ -107,13 +107,6 @@ input[type="text"]:focus {
   overflow: auto;
 }
 
-.videoPlayer {
-  margin: auto;
-  height: 80%;
-  width: 80%;
-  display: none;
-}
-
 .main-space::before {
   position: absolute;
   content: "";
